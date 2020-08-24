@@ -1,0 +1,378 @@
+\documentclass[addpoints, 12pt]{exam}
+\usepackage[top=0.75in, bottom=0.75in, left=0.75in, right=0.75in]{geometry}
+
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{epstopdf}
+\usepackage{footnote}
+\usepackage{fmtcount}
+\usepackage{array}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{amsmath}
+
+\newcommand{\fillanswer}[2][\fill]{%
+  \unskip\ \lhrulefill{#1}%
+  \ifteacher\makebox[0pt]{#2}\fi
+  \lhrulefill{#1}\ \ignorespaces}
+\newcommand{\lhrulefill}[1]{%
+  \leavevmode
+  \leaders\hrule height -.3ex depth \dimexpr .3ex+.4pt\relax % define the leader
+  \hskip\glueexpr#1/2\relax\relax % how much it should extend
+  \kern0pt
+}
+
+
+\title{MGMTMSA 408 -- Operations Analytics}
+\author{Homework 4 -- Revenue Management and Assortment Optimization (Answer Sheet)}
+\date{Due June 3, 2020 at 1pm PST}
+\begin{document}
+
+\maketitle 
+\noindent \textbf{Name:} \enspace \fillanswer{Tigran Margarian} 
+\textbf{UID:} \enspace \fillanswer{105451572} \\
+
+\noindent \textbf{Note}: Please submit your Python code on CCLE in order to receive full credit. 
+
+\section{Cloud Computing}
+
+\subsection*{Part 1: Capacity control formulation}
+
+\begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+ 	In this setting our goal is basically to decide on $x_i$ to increase the overall
+	revenue. Let's note the price of each instance as $r_i$. Then our objective 
+	function which we have to maximize would look like:
+	
+	$$ \sum_{i = 1}^{9} r_{i}x_{i} $$
+	
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	Overall there is 1024 GB of memory available. In that case the memory constraint 
+	would look like: 
+
+	$$8x_{1} + 16x_{2} + 32x_{3} + 32x_{4} + 64x_{5} + 128x_{6} + 16x_{7} + 32x_{8} + 
+	64x_{9} \leq 1024 $$
+
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	Assuming that instance requests follow the Poisson distribution with $\lambda$ 
+	being represented by Rate (\# / day) the expected number of requests for 
+	instance 5 over 5 day interval would be equal to $5\lambda_{5} = 5 \times 2.6 =
+	13$. \medskip
+
+	The corresponding constraint on the request numbers would look like: 
+	$$x_{5} \leq 13$$
+	\end{minipage}} \\\\
+
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The LP formulation for T = 5 capacity control problem: \medskip
+
+	$$maximize \sum_{i = 1}^{9} r_{i}x_{i} $$
+	
+	subject to: \medskip
+
+	$8x_{1} + 16x_{2} + 32x_{3} + 32x_{4} + 64x_{5} + 128x_{6} + 16x_{7} + 32x_{8} + 
+	64x_{9} \leq 1024 $ (memory constraint) \\
+	
+	$16x_{1} + 32x_{2} + 64x_{3} + 8x_{4} + 16x_{5} + 32x_{6} + 16x_{7} + 32x_{8} + 
+	64x_{9} \leq 512$ (CPU constraint) \\
+	
+	$x_1 + x_2 + x_3 + x_4 + x_5 + x_6 + 2x_7 + 6x_8 + 8x_9 \leq 64$ (GPU constraint)\\
+	
+	$x_1 \leq 25$; $x_2 \leq 25$; $x_3 \leq 9$; $x_4 \leq 15$; $x_5 \leq 13$; $x_6 \leq 5$;
+	$x_7 \leq 4$; $x_8 \leq 2$; $x_9 \leq 1.5$\\ 
+	(demand constraints) \\
+
+	$x_i \geq 0,~\forall i \in \{1,...,9\}$ (non-negativity constraints)
+	\end{minipage}} \\\\
+\end{enumerate}
+ 
+ \subsection*{Part 2: Solving the capacity control problem in Python/Gurobi}
+ \begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	Optimal objective value (revenue) equals \$1039.43 
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	There according to the optimizer output there are 6.29 C1 instance requests accepted. 
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	It doesn't make sense to add more GPU capacity because according to the optimized 
+	solution we still have 17.29 GBs of GPU memory unused.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	Using the shadow prices of CPU and memory we can calculate that the considered
+	server would bring us \$9 of additional revenue 
+	\end{minipage}} \\\\
+\end{enumerate}
+
+ \subsection*{Part 3: Simulating current practice}
+ \begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The average number of arrivals of type C1 instance in the set of simulated 
+	sequences is 26.63
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The average number of arrivals of all types of instances over the set of 
+	simulated sequences is 101. \medskip
+
+	We know that for random variables obeying the Poisson distribution X and Y
+	the random variable Z = X + Y would have a Poisson distribution as well
+	with the expected value E(Z) = E(X) + E(Y). Therefore the obtained number
+	makes perfect sense because it's almost the same as the sum for forecasts
+	for all the instance types (99.5) and that is expected by theory.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The average revenue generated by the myopic strategy is \$528.28
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The average remaining capacities are: 0.24 CPUs, 371.52 GBs of memory and 
+	37.42 GBs of GPU memory. It seems like this following this strategy we 
+	quickly run out of CPUs and are getting left with plenty of memory and GPU 
+	capacity.
+	\end{minipage}} \\\\
+\end{enumerate}
+
+ \subsection*{Part 4: A bid-price control policy}
+ \begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	For an instance of type 5 (M2) requiring 16 CPUs, 64 GBs of memory and 1 GB of GPU
+	capacity the opportunity cost in terms of shadow prices would look like:
+
+	$$Cost~of~M2~instance~acceptance = 16\pi_1 + 64\pi_2 + \pi_3$$
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The expected number of requests of instance $i$ with Poisson arrival rate of $\lambda_i$
+	from time $t$ to $T$ is $(T-t+1)\times\lambda_i$
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The average revenue generated by the bid-price control  strategy is \$925.59 
+	which is much closer to the \textit{ideal} result that the myopic strategy revenue.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The average remaining capacities are: 27.2 CPUs, 4.88 GBs of memory and 
+	20.62 GBs of GPU memory. The distribution of capacity is much more even 
+	with bid-price control policy.
+	\end{minipage}} \\\\
+\end{enumerate}
+
+ 
+\pagebreak 
+
+\section{Designing a Sushi Menu}
+
+\subsection*{Part 1: Understanding the data}
+
+\begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The top five sushis preferred by customer 1 are:
+	\begin{itemize}
+		\item negi-toro \textit{(category 1)} - utility = 2.911
+		\item ika \textit{(category 5)} - utility = 2.808
+		\item maguro \textit{(category 1)} - utility = 2.806
+		\item samon \textit{(category 1)} - utility = 2.772
+		\item inari \textit{(category 11)} - utility = 2.751
+	\end{itemize}
+	Seems like customer 1 is a big fan of sushis belonging to the category 1 (tuna/salmon sushis).
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The worst five sushis for customer 2 are:
+	\begin{itemize}
+		\item karasumi \textit{(category 7)} - utility = -0.404
+		\item komochi-konbu \textit{(category 7)} - utility = -0.317
+		\item kyabia \textit{(category 7)} - utility = -0.258
+		\item awabi \textit{(category 4)} - utility = -0.257
+		\item kazunoko \textit{(category 7)} - utility = -0.231
+	\end{itemize}
+	We can clearly see that customer 2 hates category 7 sushis (almost all of them include roe or caviar).
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The top five sushis by average ranking (with rank = 1 as best and rank = 100 as worst) are:
+	\begin{itemize}
+		\item negi-toro \textit{(category 1)} - avg. ranking = 7.876
+		\item maguro \textit{(category 1)} - avg. ranking = 10.050 
+		\item kurumaebi \textit{(category 6)} - avg. ranking = 10.084
+		\item negi-toro-maki \textit{(category 1)} - avg. ranking = 10.214
+		\item ebi \textit{(category 6)} - avg. ranking = 11.932
+	\end{itemize}
+	We can see that the top-5 sushis for all the customers surveyed are belonging either to category 1 or 6.
+	Category 1 us characterized by including tuna and category 6 sushis mostly include shrimp.  
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The sushi with the worst average ranking is \textbf{kyabia} with 
+	average ranking value of 90.648. 
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The most controversial sushi based on ranking standard deviation is \textbf{awabi} 
+	with a ranking SD of 27.439 and average ranking value of 62.592. 
+	\end{minipage}} \\\\
+\end{enumerate}
+
+\subsection*{Part 2: Common-sense solutions}
+
+\begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The expected revenue from offering all the sushis is \$21.51
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The ten most expensive sushis are: \textbf{toro, awabi, tarabagani, akagai, umi, kurumaebi, 
+	chu-toro, suzuki, hirame, botanebi}. \medskip 
+
+	The expected revenue with this set is equal to \$25.64 
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The expected revenue from offering the customers' favorite sushis is \$21.51. \medskip
+
+	Interestingly that is the same result we obtained from offering all the sushis. I believe
+	it happens because from the whole variety of sushis we offer in part a), customers choose one bringing
+	the highest utility for them. In part c) we explicitly arrange the menu in such way to include the 
+	favorite sushi of each customer. Therefore, in both cases customers end up with the same choice 
+	delivering the same revenue to the company.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	There are several reasons why offering all sushis would be suboptimal strategy. First of all, 
+	clearly there are some sushis that would never be ordered but their offering will have an impact
+	on the budget of the restaurant. Second, by offering everything we provide our customers an 
+	opportunity to choose the highest utility option which may be actually not very profitable
+	for the restaurant. If in turn we could find a set what would still provide an option with 
+	a utility higher than 3 (no option) and additionally boost the expected profit maximally - that 
+	would provide a more optimal solution.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The approach of offering the most expensive and revenue driving sushis may be suboptimal because
+	usually there is a negative correlation between utility of a good and its price. Customers don't 
+	quite enjoy paying much and therefore leaving only expensive choices my force many customers to 
+	leave the restaurant without an order what will in turn decrease the potential revenue.
+	\end{minipage}} \\\\
+\end{enumerate}
+
+\subsection*{Part 3: An integer optimization model}
+
+\begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	In this model $y_{k,i}$ is a binary variable which equals to 1 if k-th customer chooses 
+	the i-th sushi and zero otherwise. $x_i$ is binary variable indicating whether we include 
+	the i-th sushi in the menu. $r_i$ is the price of i-th sushi and finally $u_{k,j}$ is the 
+	utility of j-th sushi for the k-th customer.
+	Let's go over the considered constraints:
+	\begin{itemize}
+		\item The 1b) constraint means that each customer can choose only one option  
+			(order one type of sushi or walk away).
+		\item The 1c) constraint means that the utility of the option chosen by each 
+			customer should be greater or equal than the utility of other options
+			(that said each customer's choice has the highest utility available).
+		\item The 1d) constraint means that the utility of the option chosen by each 
+			customer should be greater or equal then the utility of non-purchase option 
+			(that said each customer's choice shouldn't have a lower utility than the 
+			non-purchase option).
+		\item The 1e) constraint means that it's impossible for the customer to choose 
+			an option not offered by the restaurant.
+	\end{itemize}
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The optimized revenue from LP relaxation equals to \$30.59.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	That is impossible because even the linear LP relaxation gave the optimal revenue 
+	of \$30.59 per customer. That means that the integer LP output cannot be greater 
+	and therefore a set of menu delivering \$32 of per-customer revenue cannot exist.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The optimized revenue from integer LP equals to \$26.24 what is \$4.73 more than 
+	the result of common-sense strategy of offering all sushis (or only customers' favorites) and 
+	\$0.60 more than the result of expensive sushi offering. We should also keep in mind that this 
+	is the per-customer level revenue which means that 60 additional cents from customer can convert
+	into much higher number depending on how much clients the restaurant can serve.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The optimal set of sushis now includes 7 options: \textbf{toro, awabi, saba, tarabagani,
+	mentaiko-maki, ika-nattou, tobiuo}.
+	\end{minipage}} \\\\
+\end{enumerate}
+\pagebreak
+
+\subsection*{Part 4: A constrained model}
+
+\begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	First we should reshape the category data into 2 dimensional matrix $c_{100,12}$ of 
+	binary variables where $c_{i,c} = 1$ if the \textit{i}-th sushi belongs to the category \textit{c}
+	and zero otherwise. With that we can add the necessary constraint which will look like: 
+
+	$$\sum_{i=1}^{n} x_{i} c_{i,c} \geq 1~~ \forall~c \in \{1,2,...,12\}$$
+
+	This condition will force the optimizer to keep at least one sushi of each category.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The optimized revenue from constrained integer LP equals to \$25.88.
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+	\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	The optimal set of sushis now includes 19 options: \textbf{tamago, toro, awabi,
+	shako, saba, unagi, geso, tarabagani, ankimo, gyusashi, fugu, okura, ika-nattou,
+	kaiware, kue, kamo, mamakari, kyabia, kaki.}
+	\end{minipage}} \\\\
+\end{enumerate}
+
+\subsection*{Part 5: Next steps}
+\begin{enumerate}[a)]
+\item $\phantom{=}$ \vspace{-2em}
+\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	Some limitations of this model I can think about are:
+	\begin{itemize}
+		\item The fact that we assume that each customer is allowed to purchase only one 
+			single sushi. It may easily be the case in real conditions that some customers 
+			would choose more than one sushi. 
+		\item The equal probability of each customer. The created model assumes that there is 
+			an equal probability of each customer to show up what may turn out to be wrong.
+		\item Finally, we assume that the survey conducted with 500 customers should be descriptive
+			for all future customers and that also may turn out to be wrong.
+	\end{itemize} 
+	\end{minipage}} \\\\
+\item $\phantom{=}$ \vspace{-2em}
+\fbox{\begin{minipage}[2\height]{\dimexpr\textwidth-11\fboxsep\fboxrule\relax}
+	One approach which may help to reduce the number of customers considered may be clustering.
+	We can implement clustering algorithms like K-Means or Factor Analysis to group customers 
+	with similar preferences. That may in turn significantly simplify calculations for the optimizer.
+	\end{minipage}} \\\\
+\end{enumerate}
+
+
+\end{document}
